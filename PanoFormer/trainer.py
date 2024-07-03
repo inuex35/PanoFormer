@@ -19,6 +19,7 @@ import loss_gradient as loss_g
 from network.model import Panoformer as PanoBiT
 from stanford2d3d import Stanford2D3D
 from matterport3d import Matterport3D
+from mydataset import MyDataset
 
 
 def gradient(x):
@@ -36,14 +37,14 @@ class Trainer:
 
         self.log_path = os.path.join(self.settings.log_dir, self.settings.model_name)
 
-        train_dataset = Matterport3D('../data/realM3D/','./splitsm3d/matterport3d_train.txt', self.settings.disable_color_augmentation, self.settings.disable_LR_filp_augmentation,
+        train_dataset = MyDataset('/notebooks/ue5','/notebooks/ue5/train.txt', self.settings.disable_color_augmentation, self.settings.disable_LR_filp_augmentation,
                                      self.settings.disable_yaw_rotation_augmentation, is_training=True)
 
         self.train_loader = DataLoader(train_dataset, self.settings.batch_size, True,
                                        num_workers=self.settings.num_workers, pin_memory=True, drop_last=True)
         num_train_samples = len(train_dataset)
         self.num_total_steps = num_train_samples // self.settings.batch_size * self.settings.num_epochs
-        val_dataset = Matterport3D('../data/realM3D/','./splitsm3d/matterport3d_test.txt', self.settings.disable_color_augmentation, self.settings.disable_LR_filp_augmentation,
+        val_dataset = MyDataset('/notebooks/ue5','/notebooks/ue5/test.txt', self.settings.disable_color_augmentation, self.settings.disable_LR_filp_augmentation,
                                     self.settings.disable_yaw_rotation_augmentation, is_training=False)
         self.val_loader = DataLoader(val_dataset, self.settings.batch_size, False,
                                      num_workers=self.settings.num_workers, pin_memory=True, drop_last=True)
